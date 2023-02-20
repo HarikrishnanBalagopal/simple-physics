@@ -1,6 +1,10 @@
-import { greet, Universe, Cell } from "wasm-game-of-life";
+import { greet, Universe, Cell, PhysicsUniverse } from "wasm-game-of-life";
 import { memory } from 'wasm-game-of-life/wasm_game_of_life_bg';
 
+const W = 640;
+const H = W;
+const NUM_PARTICLES = 100;
+const GRAVITY = 0.001;
 const CELL_SIZE = 5; // px
 const GRID_COLOR = "#CCCCCC";
 const DEAD_COLOR = "#FFFFFF";
@@ -10,9 +14,21 @@ function main() {
     greet('John');
     const output_wasm = document.querySelector('#output-wasm');
     const output_wasm_canvas = document.querySelector('#output-wasm-canvas');
+    const output_wasm_physics_canvas = document.querySelector('#output-wasm-physics-canvas');
+    const button_add_particle = document.querySelector('#button-add-particle');
     const ctx = output_wasm_canvas.getContext('2d');
+    const physicsCtx = output_wasm_physics_canvas.getContext('2d');
     const universe = Universe.new();
     universe.tick();
+
+    const physicsUniverse = PhysicsUniverse.new(NUM_PARTICLES);
+    physicsUniverse.set_gravity(GRAVITY);
+    console.log('physicsUniverse', physicsUniverse);
+    physicsUniverse.tick(0.1);
+    const dataStr = physicsUniverse.render();
+    const data = JSON.parse(dataStr);
+    console.log('data', data);
+
     output_wasm.textContent = universe.render();
     const width = universe.width();
     const height = universe.height();
@@ -22,6 +38,10 @@ function main() {
 
     output_wasm_canvas.width = (CELL_SIZE + 1) * width + 1;
     output_wasm_canvas.height = (CELL_SIZE + 1) * height + 1;
+    output_wasm_physics_canvas.width = W;
+    output_wasm_physics_canvas.height = H;
+
+    button_add_particle.addEventListener('click', () => physicsUniverse.add_particle());
 
     const drawGrid = () => {
         ctx.beginPath();
@@ -48,7 +68,7 @@ function main() {
 
     const drawCells = () => {
         const cellsPtr = universe.cells();
-        console.log('cellsPtr', cellsPtr);
+        // console.log('cellsPtr', cellsPtr);
         const cells = new Uint8Array(memory.buffer, cellsPtr, width * height);
 
         ctx.beginPath();
@@ -73,16 +93,49 @@ function main() {
         ctx.stroke();
     };
 
+    const drawBackground = () => {
+        physicsCtx.save();
+        physicsCtx.fillStyle = 'black';
+        physicsCtx.fillRect(0, 0, W, H);
+        physicsCtx.fillStyle = '#222222';
+        physicsCtx.beginPath();
+        physicsCtx.arc(W / 2, H / 2, W / 2, 0, 2 * Math.PI);
+        physicsCtx.fill();
+        physicsCtx.restore();
+    }
+
+    const drawParticles = () => {
+        physicsCtx.save();
+        const dataStr = physicsUniverse.render();
+        // console.log('dataStr', dataStr);
+        const data = JSON.parse(dataStr);
+        // console.log('data', data);
+
+        for (let p of data) {
+            physicsCtx.fillStyle = `hsl(${p.color}, 100%, 50%)`;
+            physicsCtx.beginPath();
+            physicsCtx.arc(p.pos[0], p.pos[1], p.radius, 0, 2 * Math.PI);
+            physicsCtx.fill();
+        }
+
+        physicsCtx.restore();
+    };
+
     let last_t = 0;
     const step = (t) => {
         requestAnimationFrame(step);
-        if (t - last_t < 1) return;
+        const dt = t - last_t;
+        if (dt < 1) return;
         last_t = t;
         universe.tick();
         output_wasm.textContent = universe.render();
 
         drawGrid();
         drawCells();
+
+        physicsUniverse.tick(dt);
+        drawBackground();
+        drawParticles();
     };
     requestAnimationFrame(step);
 }

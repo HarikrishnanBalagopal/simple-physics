@@ -15,12 +15,21 @@
         line-height: .6em;
         /* letter-spacing: .5em; */
       }
+      #output-wasm-physics-canvas {
+        border: 1px solid red;
+      }
     </style>
   </head>
   <body>
     <noscript>This page contains webassembly and javascript content, please enable javascript in your browser.</noscript>
     <pre id="output-wasm"></pre>
     <canvas id="output-wasm-canvas"></canvas>
+    <div>
+      <canvas id="output-wasm-physics-canvas"></canvas>
+      <div>
+        <button id="button-add-particle">Add a particle</button>
+      </div>
+    </div>
     <script src="./bootstrap.js"></script>
   </body>
 </html>
