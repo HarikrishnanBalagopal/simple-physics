@@ -22,13 +22,18 @@
   </head>
   <body>
     <noscript>This page contains webassembly and javascript content, please enable javascript in your browser.</noscript>
-    <pre id="output-wasm"></pre>
-    <canvas id="output-wasm-canvas"></canvas>
-    <div>
-      <canvas id="output-wasm-physics-canvas"></canvas>
-      <div>
-        <button id="button-add-particle">Add a particle</button>
-      </div>
+    <div class="wrapper">
+      <h1>Simple Physics Engine in Rust using WASM</h1>
+      <section>
+        <pre id="output-wasm"></pre>
+        <canvas id="output-wasm-canvas"></canvas>
+      </section>
+      <section>
+        <canvas id="output-wasm-physics-canvas"></canvas>
+        <div>
+          <button id="button-add-particle">Add a particle</button>
+        </div>
+      </section>
     </div>
     <script src="./bootstrap.js"></script>
   </body>

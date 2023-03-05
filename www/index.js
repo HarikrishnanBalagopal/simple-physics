@@ -1,5 +1,5 @@
-import { greet, Universe, Cell, PhysicsUniverse } from "wasm-game-of-life";
-import { memory } from 'wasm-game-of-life/wasm_game_of_life_bg';
+import { Universe, Cell, PhysicsUniverse } from "simple-physics";
+import { memory } from 'simple-physics/simple_physics_bg';
 
 const W = 640;
 const H = W;
@@ -11,7 +11,6 @@ const DEAD_COLOR = "#FFFFFF";
 const ALIVE_COLOR = "#000000";
 
 function main() {
-    greet('John');
     const output_wasm = document.querySelector('#output-wasm');
     const output_wasm_canvas = document.querySelector('#output-wasm-canvas');
     const output_wasm_physics_canvas = document.querySelector('#output-wasm-physics-canvas');
