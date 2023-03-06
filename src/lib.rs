@@ -104,7 +104,6 @@ impl PhysicsUniverse {
         }
     }
     fn new_particle_at_pos(
-        rng: &mut ThreadRng,
         x: f32,
         y: f32,
         old_x: f32,
@@ -128,7 +127,7 @@ impl PhysicsUniverse {
         }
     }
     pub fn get_num(&self) -> i32 {
-        42
+        44
     }
     pub fn get_particles_offset(&self) -> *const Particle {
         self.particles.as_ptr()
@@ -153,7 +152,7 @@ impl PhysicsUniverse {
         color: f32,
     ) {
         let p =
-            PhysicsUniverse::new_particle_at_pos(&mut self.rng, x, y, old_x, old_y, radius, color);
+            PhysicsUniverse::new_particle_at_pos(x, y, old_x, old_y, radius, color);
         self.particles.push(p);
     }
     pub fn delete_all_particles(&mut self) {
