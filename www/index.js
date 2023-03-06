@@ -6,6 +6,10 @@ const H = W;
 const NUM_SUB_STEPS = 4;
 const NUM_PARTICLES = 100;
 const GRAVITY = 0.001;
+const PARTICLES_STRUCT_X_OFFSET = 1;
+const PARTICLES_STRUCT_Y_OFFSET = 2;
+const PARTICLES_STRUCT_R_OFFSET = 5;
+const PARTICLES_STRUCT_C_OFFSET = 6;
 
 function main() {
     // model
@@ -37,7 +41,8 @@ function main() {
     const button_add_particle = document.querySelector('#button-add-particle');
     const button_clear_particle = document.querySelector('#button-clear-particle');
     const button_fountain = document.querySelector('#button-fountain');
-    button_add_particle.addEventListener('click', () => physicsUniverse.add_particle());
+    const checkbox_chain = document.querySelector('#checkbox-chain');
+    button_add_particle.addEventListener('click', () => console.log('added particle with id:', physicsUniverse.add_particle()));
     button_clear_particle.addEventListener('click', () => physicsUniverse.delete_all_particles());
 
     // rendering
@@ -69,10 +74,10 @@ function main() {
         }
 
         for (let i = 0; i < CURR_NUM_PARTICLES * PARTICLE_MEM_SIZE_IN_FLOATS; i += PARTICLE_MEM_SIZE_IN_FLOATS) {
-            const x = particlesMemArray[i + 0];
-            const y = particlesMemArray[i + 1];
-            const radius = particlesMemArray[i + 4];
-            const color = particlesMemArray[i + 5];
+            const x = particlesMemArray[i + PARTICLES_STRUCT_X_OFFSET];
+            const y = particlesMemArray[i + PARTICLES_STRUCT_Y_OFFSET];
+            const radius = particlesMemArray[i + PARTICLES_STRUCT_R_OFFSET];
+            const color = particlesMemArray[i + PARTICLES_STRUCT_C_OFFSET];
             // console.log(x, y, radius, color);
             physicsCtx.fillStyle = `hsl(${color}, 100%, 50%)`;
             physicsCtx.beginPath();
@@ -89,6 +94,7 @@ function main() {
     let avg_fps = 0;
     let last_t = 0;
     let last_fountain_t = 0;
+    let last_fountain_chain_id = -1;
     const step = (t) => {
         if (!playing) return;
         requestAnimationFrame(step);
@@ -111,7 +117,9 @@ function main() {
             const scaled_t = last_t * 0.01;
             const old_x = W / 2 + scale * Math.cos(0.1 * scaled_t);
             const old_y = H / 2 + scale * Math.sin(0.1 * scaled_t);
-            physicsUniverse.add_particle_at_pos(W / 2, H / 2, old_x, old_y, 5. + 5 * Math.random(), scaled_t);
+            const fountain_chain_id = physicsUniverse.add_particle_at_pos(W / 2, H / 2, old_x, old_y, 5. + 5 * Math.random(), scaled_t);
+            if (checkbox_chain.checked && last_fountain_chain_id >= 0) physicsUniverse.link_particles(fountain_chain_id, last_fountain_chain_id);
+            last_fountain_chain_id = fountain_chain_id;
         }
 
         for (let i = 0; i < NUM_SUB_STEPS; i++) {
@@ -124,6 +132,7 @@ function main() {
     // fountain
     button_fountain.addEventListener('click', () => {
         fountain_activated = !fountain_activated;
+        last_fountain_chain_id = -1;
     });
 
     button_pause.addEventListener('click', () => {
