@@ -1,5 +1,5 @@
-import { PhysicsUniverse } from "simple-physics";
-import { memory } from 'simple-physics/simple_physics_bg';
+import { PhysicsUniverse } from "@haribala/simple-physics";
+import { memory } from '@haribala/simple-physics/simple_physics_bg.wasm';
 
 const W = 640;
 const H = W;
