@@ -15,9 +15,6 @@
         line-height: .6em;
         /* letter-spacing: .5em; */
       }
-      #output-wasm-physics-canvas {
-        border: 1px solid red;
-      }
     </style>
   </head>
   <body>
@@ -25,14 +22,22 @@
     <div class="wrapper">
       <h1>Simple Physics Engine in Rust using WASM</h1>
       <section>
-        <pre id="output-wasm"></pre>
-        <canvas id="output-wasm-canvas"></canvas>
-      </section>
-      <section>
+        <div>
+          <span>fps:</span>
+          <span id="output-fps"></span>
+          <span>particles:</span>
+          <span id="output-num-particles">0</span>
+        </div>
         <canvas id="output-wasm-physics-canvas"></canvas>
         <div>
           <button id="button-add-particle">Add a particle</button>
+          <button id="button-clear-particle">Clear particles</button>
+          <button id="button-fountain">Toggle fountain of particles</button>
         </div>
+      </section>
+      <section>
+        <pre id="output-wasm"></pre>
+        <canvas id="output-wasm-canvas"></canvas>
       </section>
     </div>
     <script src="./bootstrap.js"></script>

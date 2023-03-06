@@ -22,6 +22,7 @@ extern "C" {
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Serialize)]
+#[repr(C)]
 pub struct Vec2(f32, f32);
 
 impl Vec2 {
@@ -66,6 +67,7 @@ impl Sub for Vec2 {
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Serialize)]
+#[repr(C)]
 pub struct Particle {
     pub pos: Vec2,
     pub old_pos: Vec2,
@@ -101,6 +103,22 @@ impl PhysicsUniverse {
             rng,
         }
     }
+    fn new_particle_at_pos(
+        rng: &mut ThreadRng,
+        x: f32,
+        y: f32,
+        old_x: f32,
+        old_y: f32,
+        radius: f32,
+        color: f32,
+    ) -> Particle {
+        Particle {
+            pos: Vec2(x, y),
+            old_pos: Vec2(old_x, old_y),
+            radius,
+            color,
+        }
+    }
     fn new_particle(rng: &mut ThreadRng) -> Particle {
         Particle {
             pos: Vec2(rng.gen(), rng.gen()).scale(320.),
@@ -109,9 +127,37 @@ impl PhysicsUniverse {
             color: 360. * rng.gen::<f32>(),
         }
     }
+    pub fn get_num(&self) -> i32 {
+        42
+    }
+    pub fn get_particles_offset(&self) -> *const Particle {
+        self.particles.as_ptr()
+    }
+    pub fn get_particles_mem_size(&self) -> usize {
+        std::mem::size_of::<Particle>()
+    }
+    pub fn get_num_particles(&self) -> usize {
+        self.particles.len()
+    }
     pub fn add_particle(&mut self) {
-        let p = PhysicsUniverse::new_particle(& mut self.rng);
+        let p = PhysicsUniverse::new_particle(&mut self.rng);
         self.particles.push(p);
+    }
+    pub fn add_particle_at_pos(
+        &mut self,
+        x: f32,
+        y: f32,
+        old_x: f32,
+        old_y: f32,
+        radius: f32,
+        color: f32,
+    ) {
+        let p =
+            PhysicsUniverse::new_particle_at_pos(&mut self.rng, x, y, old_x, old_y, radius, color);
+        self.particles.push(p);
+    }
+    pub fn delete_all_particles(&mut self) {
+        self.particles.clear();
     }
     pub fn set_gravity(&mut self, g: f32) {
         self.gravity = g;
