@@ -1,17 +1,9 @@
-mod utils;
-
 use rand::rngs::ThreadRng;
 use rand::Rng;
 use std::fmt::Display;
 use std::ops::{Add, Sub};
 use wasm_bindgen::prelude::*;
 extern crate rand;
-
-// When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
-// allocator.
-#[cfg(feature = "wee_alloc")]
-#[global_allocator]
-static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
 #[wasm_bindgen]
 extern "C" {
