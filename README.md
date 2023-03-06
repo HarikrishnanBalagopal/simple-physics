@@ -3,6 +3,8 @@
 Written in Rust and targetting WebAssembly, published as an NPM package.
 Meant for use in web apps for rendering physics simulations.
 
+[Live Demo](https://haribala.dev/simple-physics/)
+
 ## Steps to build and run sample app
 
 ### Prerequisites
